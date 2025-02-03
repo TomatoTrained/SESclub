@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        background-image: url("https://github.com/TomatoTrained/AutoBidEAuction/blob/main/1720729465853.jpg?raw=true");
+        background-size: cover;
+        color: #333;
+        font-family: Arial, sans-serif;
+      }
+
+      .tabbed-form {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: rgba(
+          255,
+          255,
+          255,
+          0.8
+        ); /* To have a slight transparency */
+      }
+
+      .tab-buttons {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #f0f;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        color: white;
+        font-size: 16px;
+      }
+
+      .tab {
+        display: none;
+      }
+
+      .tab.active {
+        display: block;
+      }
+
+      h1 {
+        font-size: 36px;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tabbed-form">
+      <h1>Admin Dashboard</h1>
+      <div class="tab-buttons">
+       
+        <button onclick="openTab('tab2')">
+          <a href="Clubmembership.html">Club Members List</a>
+        </button>
+        <button onclick="openTab('tab3')">
+          <a href="NewsInformation.html">Upload News and Information</a>
+        </button>
+        <button onclick="openTab('tab4')">
+          <a href="upload-calender.html">Upload Calendar and Events</a>
+        </button>
+      </div>
+
+      <div id="tab1" class="tab active">
+        <h2>Welcome to the Admin Dashboard</h2>
+        <p>
+          This is where you can manage the Club Operations and other activities.
+        </p>
+      </div>
+
+      <div id="tab2" class="tab">
+        <h2>Our Club Mmebers</h2>
+        <p>Here you can see the current members and new members as they update.</p>
+        <!--  content goes here -->
+      </div>
+
+      <div id="tab3" class="tab">
+        <h2>Club News and Information</h2>
+        <p>Upload Relevant News and Information.</p>
+        <!-- Upload content goes here -->
+      </div>
+
+      <div id="tab4" class="tab">
+        <h2>Upload Calendar</h2>
+        <p>Set dates and times for upcoming events.</p>
+        <!-- Upload calendar content goes here -->
+      </div>
+    </div>
+
+    <script>
+      function openTab(tabName) {
+        var tabContent = document.getElementsByClassName("tab");
+        for (var i = 0; i < tabContent.length; i++) {
+          tabContent[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+      }
+    </script>
+  </body>
+</html>
