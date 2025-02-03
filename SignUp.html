@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet"> <!-- Import Roboto font -->
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Use Roboto font */
+            background-color: #f4f7f8; /* Light background color */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50; /* Dark blue */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff; /* Blue border on focus */
+            outline: none;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745; /* Green button */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: translateY(-2px); /* Lift effect on hover */
+        }
+
+        #strengthIndicator {
+            margin-top: 10px;
+            color: white;
+        }
+
+        .valid {
+            color: lightgreen;
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAYbxF-DEgsNtA0WgF3AyG67ryDiOEzLoc",
+            authDomain: "ses-club.firebaseapp.com",
+            databaseURL: "https://user-login-form-a440d-default-rtdb.firebaseio.com",
+            projectId: "ses-club",
+            storageBucket: "ses-club.firebasestorage.app",
+            messagingSenderId: "451938738058",
+            appId: "1:451938738058:web:50c7537a4061050cf273",
+            measurementId:"G-E55W2P30YZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        window.signupUser = function (fullname, email, password) {
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    set(ref(database, 'users/' + user.uid), {
+                        fullname: fullname,
+                        email: email
+                    });
+                    alert("Account successfully created!");
+                    window.location.href = "user.html"; // Redirect to user page
+                })
+                .catch((error) => {
+                    if (error.code === "auth/email-already-in-use") {
+                        alert("Error: The email address is already in use by another account.");
+                    } else {
+                        alert("Error: " + error.message);
+                    }
+                });
+        };
+
+        // Handle form submission
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("signupForm").addEventListener("submit", (event) => {
+                event.preventDefault();
+                const fullname = document.getElementById("fullname").value;
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+
+                // Call the signup function
+                signupUser(fullname, email, password);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Sign Up</h1>
+    <form id="signupForm">
+        <input type="text" name="fullname" placeholder="Full Name" id="fullname" required /><br />
+        <input type="email" name="email" id="email" placeholder="Email" required /><br />
+        <input type="password" name="password" placeholder="Password" id="password" required /><br />
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
