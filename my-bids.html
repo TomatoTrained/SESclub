@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bids</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8; /* Light background color */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #00796b; /* Dark teal color */
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .section {
+            max-width: 600px; /* Limit width for better readability */
+            margin: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .bid {
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+            transition: background 0.3s; /* Smooth background transition */
+        }
+
+        .bid:last-child {
+            border-bottom: none;
+        }
+
+        .bid:hover {
+            background: #e0f7fa; /* Light blue background on hover */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        .bid strong {
+            color: #00796b; /* Dark teal for labels */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em; /* Adjust heading size for smaller screens */
+            }
+
+            .section {
+                padding: 15px; /* Adjust padding for smaller screens */
+            }
+
+            .bid {
+                padding: 10px; /* Adjust padding for smaller bids */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>My Bids</h1>
+    <div id="my-bids-container" class="section"></div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js';
+        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-auth.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXE5Cp4foZxRPcAOlCSHfbKTFwIWdQSWE",
+            authDomain: "user-login-form-a440d.firebaseapp.com",
+            databaseURL: "https://user-login-form-a440d-default-rtdb.firebaseio.com",
+            projectId: "user-login-form-a440d",
+            storageBucket: "user-login-form-a440d.appspot.com",
+            messagingSenderId: "536643428878",
+            appId: "1:536643428878:web:b9527baf1828015b0a525f",
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Fetch and display my bids
+        async function getMyBids(bidderEmail) {
+            console.log("Querying bids for email:", bidderEmail); // Log the email being queried
+            const carsSnapshot = await getDocs(collection(db, "cars"));
+            const myBids = [];
+
+            carsSnapshot.forEach((doc) => {
+                const car = doc.data();
+                const bids = car.bids || [];
+
+                bids.forEach(bid => {
+                    // Check if bidderEmail exists in the bid object
+                    if (bid.bidderEmail && bid.bidderEmail.trim().toLowerCase() === bidderEmail.trim().toLowerCase()) {
+                        myBids.push({
+                            car: car,
+                            bidAmount: bid.bidAmount,
+                            date: bid.date,
+                        });
+                    }
+                });
+            });
+
+            displayMyBids(myBids);
+        }
+
+        function displayMyBids(myBids) {
+            const container = document.getElementById("my-bids-container");
+            container.innerHTML = "";
+
+            if (myBids.length === 0) {
+                container.innerText = "No bids placed.";
+                return;
+            }
+
+            myBids.forEach(bid => {
+                const bidElement = document.createElement("div");
+                bidElement.classList.add("bid");
+                bidElement.innerHTML = `
+                    <strong>Car:</strong> ${bid.car.make} ${bid.car.model}<br>
+                    <strong>Bid Amount:</strong> $${bid.bidAmount}<br>
+                    <strong>Date:</strong> ${new Date(bid.date).toLocaleString()}<br>
+                    <hr>
+                `;
+                container.appendChild(bidElement);
+            });
+        }
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const bidderEmail = user.email; // Get the logged-in user's email
+                getMyBids(bidderEmail); // Call the function with the user's email
+            } else {
+                console.log("No user is signed in.");
+                // Optionally redirect to a login page or show an error message
+            }
+        });
+    </script>
+</body>
+</html>

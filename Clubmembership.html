@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Club Membership Approval</title>
+    <link rel="stylesheet" href="member.css">
+</head>
+<body>
+    <h1>Club Membership Approval</h1>
+    <div id="memberships-container"></div>
+
+    <script type="module">
+        // JavaScript code here
+
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js';
+import { getFirestore, collection, getDocs, updateDoc, doc, getDoc, addDoc } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-firestore.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBXE5Cp4foZxRPcAOlCSHfbKTFwIWdQSWE",
+    authDomain: "user-login-form-a440d.firebaseapp.com",
+    projectId: "user-login-form-a440d",
+    storageBucket: "user-login-form-a440d.appspot.com",
+    messagingSenderId: "536643428878",
+    appId: "1:536643428878:web:b9527baf1828015b0a525f",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadMemberships() {
+    const membershipsContainer = document.getElementById("memberships-container");
+    try {
+        const membershipsSnapshot = await getDocs(collection(db, "memberships"));
+        membershipsContainer.innerHTML = ""; // Clear previous memberships
+        membershipsSnapshot.forEach((membershipDoc) => {
+            const membership = membershipDoc.data();
+            const membershipElement = document.createElement("div");
+            membershipElement.classList.add("membership");
+            membershipElement.innerHTML = `
+                <strong>Name:</strong> ${membership.name}<br>
+                <strong>Email:</strong> ${membership.email}<br>
+                <strong>Membership Type:</strong> ${membership.membershipType}<br>
+                <button class="approve-btn" data-membership-id="${membershipDoc.id}">Approve</button>
+                <button class="reject-btn" data-membership-id="${membershipDoc.id}">Reject</button>
+            `;
+            membershipsContainer.appendChild(membershipElement);
+        });
+        attachEventListeners();
+    } catch (error) {
+        console.error("Error loading memberships:", error);
+        membershipsContainer.innerHTML = "<p>Error loading memberships. Please try again later.</p>";
+    }
+}
+
+function attachEventListeners() {
+    const approveButtons = document.querySelectorAll('.approve-btn');
+    approveButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const membershipId = button.getAttribute('data-membership-id');
+            approveMembership(membershipId);
+        });
+    });
+    const rejectButtons = document.querySelectorAll('.reject-btn');
+    rejectButtons.forEach(button)
+    </script>
+</body>
+</html>
