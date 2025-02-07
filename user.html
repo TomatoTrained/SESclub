@@ -125,7 +125,7 @@
             signInWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     alert("Login successful!");
-                    window.location.href = "login.html"; // Redirect to user dashboard
+                    window.location.href = "dashboard.html"; // Redirect to user dashboard
                 })
                 .catch((error) => {
                     const errorCode = error.code;
